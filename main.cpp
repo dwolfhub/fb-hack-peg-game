@@ -41,7 +41,7 @@ bool goesleft(int x, int y)
 
 bool goesright(int x, int y, int cols)
 {
-    return (y % 2 == 0 && x <= cols - 2) || (y % 2 == 1 && x <= cols - 1);
+    return (y % 2 == 1) || (y % 2 == 0 && x < cols - 2);
 }
 
 int goleft(int x, int y)
@@ -85,7 +85,7 @@ double drop(
     double probsum = 0.0;
     if (missing_peg(x, y, cols, rows, empties))
     {
-        probsum = drop(x, y + 1, rows, cols, goal, prob, empties, memoed, memo);
+        probsum = drop(x, y + 2, rows, cols, goal, prob, empties, memoed, memo);
     }
     else
     {
@@ -95,8 +95,8 @@ double drop(
             probsum += drop(goright(x, y), y + 1, rows, cols, goal, goesleft(x, y) ? prob * 0.5 : prob, empties, memoed, memo);
     }
 
-    memoed[x][y] = true;
-    memo[x][y] = probsum / prob;
+    // memoed[x][y] = true;
+    // memo[x][y] = probsum / prob;
 
     return probsum;
 }
@@ -131,8 +131,9 @@ BestProb prob_from_line(string line)
         goal = stoi(line_parts[2]);
 
     vector<vector<bool>> empties(cols, vector<bool>(cols, false));
+    int num_empties = stoi(line_parts[3]);
 
-    if (stoi(line_parts[3]) > 0)
+    if (num_empties > 0)
     {
         int x, y;
         for (int i = 4; i < line_parts.size(); i += 2)
@@ -155,7 +156,7 @@ int main()
     int i = 1;
     stringstream stream;
 
-    ifile.open("input.txt");
+    ifile.open("peg_game.txt");
     ofile.open("output.txt");
     if (ifile.is_open() && ofile.is_open())
     {
